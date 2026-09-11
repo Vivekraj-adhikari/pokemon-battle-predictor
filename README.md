@@ -96,4 +96,8 @@ No license has been added to this repository yet.
 
 ## Acknowledgements
 
+<<<<<<< HEAD
 Data provided by [PokeAPI](https://pokeapi.co/).
+=======
+Data provided by [PokeAPI](https://pokeapi.co/).
+>>>>>>> 3b7a6e6 (Creates readme for project)
