@@ -1,15 +1,14 @@
 {
-  "name": "pokemon-showdown",
+  "name": "pkmn-1v1-sim",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Monte Carlo 1v1 Pokemon battle simulator over randomized Gen 9 National Dex sets, using pokemon-showdown.",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node main.js --csv=sample-pairs.csv --trials=5 --workers=2 --outDir=out-smoketest",
+    "build-items": "node scripts/buildItemPool.js",
+    "start": "node main.js"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "pokemon-showdown": "^0.11.11"
   }
