@@ -1,53 +1,64 @@
-const { Dex, toID, Battle } = require('pokemon-showdown')
+const { Dex, BattleStream, getPlayerStreams, Teams } = require('pokemon-showdown');
+const { RandomPlayerAI } = require('pokemon-showdown/dist/sim/tools/random-player-ai');
+const { buildRandomSet } = require('./randomize_sets');
 
-const pikachu = {
-    name: 'Sparky',           // nickname (cosmetic)
-    species: 'Electivire',
-    item: 'Light Ball',
-    ability: 'Static',
-    moves: ['Thunderbolt', 'Quick Attack', 'Iron Tail', 'Volt Switch'],  // up to 4
-    nature: 'Timid',
-    evs: { hp: 4, atk: 0, def: 0, spa: 252, spd: 0, spe: 252 },   // 0-252 each, 508 total max
-    ivs: { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 },
-    level: 50,
-    gender: 'M',               // omit entirely for species that can be either -- see §10
+let _byNum = null;
+function getSpeciesByDexNum(num) {
+    if (!_byNum) {
+        _byNum = new Map();
+        for (const s of Dex.species.all()) {
+            if (s.baseSpecies !== s.name) continue;
+            if (s.isNonstandard !== null && s.isNonstandard !== 'Past') continue;
+            if (!_byNum.has(s.num)) _byNum.set(s.num, s);
+        }
+    }
+    const species = _byNum.get(num);
+    if (!species) throw new Error(`No species found for dex number ${num}`);
+    return species;
 }
 
-const charizard = {
-    name: 'Blaze',           // nickname (cosmetic)
-    species: 'Venusaur',
-    item: 'Leftovers',
-    ability: 'Blaze',
-    moves: ['Solar Beam', 'Sludge Bomb', 'Leaf Storm', 'Sunny Day'],  // up to 4
-    nature: 'Modest',
-    evs: { hp: 4, atk: 0, def: 0, spa: 252, spd: 0, spe: 252 },   // 0-252 each, 508 total max
-    ivs: { hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31 },
-    level: 50,
-    gender: 'M',               // omit entirely for species that can be either -- see §10
+const MAX_TURNS = 200;
+async function runOneBattle(speciesA, speciesB) {
+    const setA = buildRandomSet(speciesA);
+    const setB = buildRandomSet(speciesB);
+    const streams = getPlayerStreams(new BattleStream());
+    new RandomPlayerAI(streams.p1).start();
+    new RandomPlayerAI(streams.p2).start();
+    streams.omniscient.write(
+        `>start ${JSON.stringify({ formatid: 'gen9customgame' })}\n` +
+        `>player p1 ${JSON.stringify({ name: 'A', team: Teams.pack([setA]) })}\n` +
+        `>player p2 ${JSON.stringify({ name: 'B', team: Teams.pack([setB]) })}`
+    );
+    let winner = null, turns = 0;
+    for await (const chunk of streams.omniscient) {
+        if (/\|turn\|/.test(chunk) && ++turns > MAX_TURNS) break;
+        const win = chunk.match(/\|win\|(.+)/);
+        if (win) winner = win[1];
+    }
+    if (winner === 'A') return 'A';
+    if (winner === 'B') return 'B';
+    return 'draw';
 }
 
-const battle = new Battle({
-    formatid: 'gen9customgame',
-    p1: { name: 'A', team: [pikachu] },   // PokemonSet[] directly -- no Teams.pack needed here
-    p2: { name: 'B', team: [charizard] },
-});
 
-battle.makeChoices('team 1', 'team 1');   // answer team preview for both sides at once
-// let winnerCount = 0;
-// for (let i = 0; i < 100; i++) {
-//     while (!battle.ended) {
-//         battle.makeChoices('move 1', 'move 1');
-//     }
-
-//     if (battle.winner === 'A') {
-//         // Do something
-//         winnerCount++;
-//     }
-// }
-
-while (!battle.ended) {
-    battle.makeChoices('move 1', 'move 1');
+async function simulatePair(numA, numB, trials = 50) {
+    const speciesA = getSpeciesByDexNum(numA);
+    const speciesB = getSpeciesByDexNum(numB);
+    let winsA = 0, draws = 0;
+    for (let i = 0; i < trials; i++) {
+        const result = await runOneBattle(speciesA, speciesB);
+        if (result === 'A') winsA++;
+        else if (result === 'draw') draws++;
+    }
+    return { numA, numB, speciesA: speciesA.name, speciesB: speciesB.name, trials, winsA, draws, winrateA: winsA / trials };
 }
-console.log(battle.winner);   // 'A', 'B', or '' for a tie
-console.log(battle.turn);     // current/final turn number
-console.log(battle.log);
+
+
+async function main() {
+    // Bulbasaur (1) vs Charmander (4), 20 randomized-build trials.
+    const result = await simulatePair(527, 842, 100);
+    console.log(result);
+    console.log(`${result.speciesA} won ${(result.winrateA * 100).toFixed(0)}% of ${result.trials} randomized-build battles against ${result.speciesB}.`);
+}
+
+main();
