@@ -2,6 +2,7 @@
   "name": "pkmn-1v1-sim",
   "version": "1.0.0",
   "description": "Monte Carlo 1v1 Pokemon battle simulator over randomized Gen 9 National Dex sets, using pokemon-showdown.",
+  "type": "module",
   "main": "main.js",
   "scripts": {
     "test": "node main.js --csv=sample-pairs.csv --trials=5 --workers=2 --outDir=out-smoketest",

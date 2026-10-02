@@ -1,4 +1,4 @@
-const { Dex } = require('pokemon-showdown');
+import Dex from 'pokemon-showdown';
 
 function shuffled(arr, rng) {
     const a = arr.slice();
@@ -58,4 +58,4 @@ function buildRandomSet(species, rng = Math.random) {
     return set;
 }
 
-module.exports = { buildRandomSet, pickRandomAbility, randomEVs, pickRandomNature, getFullMovepool };
+export { buildRandomSet, pickRandomAbility, randomEVs, pickRandomNature, getFullMovepool };

@@ -1,6 +1,8 @@
-const { Dex, BattleStream, getPlayerStreams, Teams } = require('pokemon-showdown');
-const { RandomPlayerAI } = require('pokemon-showdown/dist/sim/tools/random-player-ai');
-const { buildRandomSet } = require('./randomize_sets');
+import pkg from 'pokemon-showdown';
+import RandomPlayerAI from 'pokemon-showdown/dist/sim/tools/random-player-ai.js';
+import { buildRandomSet } from './randomize_sets.js';
+
+const { Dex, BattleStream, getPlayerStreams, Teams } = pkg;
 
 let _byNum = null;
 function getSpeciesByDexNum(num) {

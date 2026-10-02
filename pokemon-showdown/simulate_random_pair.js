@@ -1,4 +1,4 @@
-const battle_simulator = require('./battle_sim');
+import { simulatePair } from './battle_sim.js';
 
 function getRandomId(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -10,8 +10,8 @@ function getRandomPair() {
     return [numA, numB];
 }
 
-simulatePair = async (trials = 50) => {
+const simulate_pair = async (trials = 50) => {
     const [numA, numB] = getRandomPair();
-    const result = await battle_simulator.simulatePair(numA, numB, trials);
+    const result = await simulatePair(numA, numB, trials);
     console.log(result);
 }
