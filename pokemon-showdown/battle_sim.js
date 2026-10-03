@@ -1,6 +1,8 @@
 import pkg from 'pokemon-showdown';
-import RandomPlayerAI from 'pokemon-showdown/dist/sim/tools/random-player-ai.js';
+import randomPlayer from 'pokemon-showdown/dist/sim/tools/random-player-ai.js';
 import { buildRandomSet } from './randomize_sets.js';
+
+const { RandomPlayerAI } = randomPlayer;
 
 const { Dex, BattleStream, getPlayerStreams, Teams } = pkg;
 

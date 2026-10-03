@@ -1,5 +1,6 @@
-import Dex from 'pokemon-showdown';
+import pkg from 'pokemon-showdown';
 
+const { Dex } = pkg;
 function shuffled(arr, rng) {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) {
