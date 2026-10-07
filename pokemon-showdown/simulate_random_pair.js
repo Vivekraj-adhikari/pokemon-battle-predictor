@@ -10,8 +10,10 @@ function getRandomPair() {
     return [numA, numB];
 }
 
-const simulate_pair = async (trials = 50) => {
+const simulate_pair = async (trials = 100) => {
     const [numA, numB] = getRandomPair();
     const result = await simulatePair(numA, numB, trials);
-    console.log(result);
+    return result;
 }
+
+simulate_pair();

@@ -64,5 +64,5 @@ async function main() {
     console.log(result);
     console.log(`${result.speciesA} won ${(result.winrateA * 100).toFixed(0)}% of ${result.trials} randomized-build battles against ${result.speciesB}.`);
 }
-main();
+// main();
 export { getSpeciesByDexNum, runOneBattle, simulatePair, main };
