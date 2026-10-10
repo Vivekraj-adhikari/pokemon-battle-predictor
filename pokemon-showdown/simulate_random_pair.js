@@ -16,4 +16,4 @@ const simulate_pair = async (trials = 100) => {
     return result;
 }
 
-simulate_pair();
+export default simulate_pair;
