@@ -8,6 +8,6 @@ async function write_to_csv() {
     fs.appendFileSync('winrates.csv', csvLine);
 }
 
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 12000; i++) {
     write_to_csv();
 }
